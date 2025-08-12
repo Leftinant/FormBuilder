@@ -1,35 +1,26 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-export type QuestionType = "categorize" | "cloze" | "comprehension";
+const QuestionSchema = new Schema({
+  id: { type: String, required: true },
+  type: {
+    type: String,
+    enum: ["categorize", "cloze", "comprehension"],
+    required: true,
+  },
+  title: { type: String },
+  imageUrl: { type: String },
 
-export interface Question {
-  type: QuestionType;
-  text: string;
-  image?: string;
-  metadata: any;
-}
-
-export interface IForm extends Document {
-  title: string;
-  description?: string;
-  headerImage?: string;
-  questions: Question[];
-  responses?: any[];
-}
-
-const QuestionSchema = new Schema<Question>({
-  type: { type: String, required: true },
-  text: { type: String, required: true },
-  image: String,
-  metadata: Schema.Types.Mixed,
+  data: { type: Schema.Types.Mixed },
 });
 
-const FormSchema = new Schema<IForm>({
-  title: { type: String, required: true },
-  description: String,
-  headerImage: String,
-  questions: [QuestionSchema],
-  responses: [Schema.Types.Mixed],
-});
+const FormSchema = new Schema(
+  {
+    title: String,
+    description: String,
+    headerImage: String,
+    questions: [QuestionSchema],
+  },
+  { timestamps: true }
+);
 
-export default mongoose.model<IForm>("Form", FormSchema);
+export default mongoose.model("Form", FormSchema);
